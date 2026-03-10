@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>UrbanSaarthi - AI Blood Donor Monitoring</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="blood-style.css">
+</head>
+
+<body>
+    <div class="app-container">
+
+        <!-- ========================================== -->
+        <!-- SCREEN 1: HOSPITAL UPLOAD PORTAL           -->
+        <!-- ========================================== -->
+        <div id="screen-1" class="screen active">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-left">🏥 Hospital Portal</div>
+                <div class="header-center">LNJP Hospital <span class="badge-verified">✓</span></div>
+                <div class="header-right"><span class="live-dot"></span> Live</div>
+            </header>
+
+            <!-- Top Alert Banner -->
+            <div class="top-alert-banner">
+                <div class="banner-title">🩸 Post Blood Requirement</div>
+                <div class="banner-desc">AI will instantly match eligible donors in Delhi</div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="content-area">
+                <div class="requirement-card">
+                    <div class="card-label">NEW BLOOD REQUIREMENT</div>
+
+                    <!-- Blood Group -->
+                    <div class="form-group">
+                        <label>🩸 Blood Group Needed *</label>
+                        <div class="blood-grid">
+                            <button class="blood-pill">A+</button>
+                            <button class="blood-pill">A-</button>
+                            <button class="blood-pill active">B+</button>
+                            <button class="blood-pill">B-</button>
+                            <button class="blood-pill">O+</button>
+                            <button class="blood-pill">O-</button>
+                            <button class="blood-pill">AB+</button>
+                            <button class="blood-pill">AB-</button>
+                        </div>
+                    </div>
+
+                    <!-- Units Required -->
+                    <div class="form-group">
+                        <label>UNITS REQUIRED *</label>
+                        <div class="units-selector">
+                            <button class="unit-btn" id="unit-minus">−</button>
+                            <span class="unit-number" id="unit-count">3</span>
+                            <button class="unit-btn" id="unit-plus">+</button>
+                        </div>
+                        <div class="unit-hint">1 unit = 450ml approximately</div>
+                    </div>
+
+                    <!-- Urgency Level -->
+                    <div class="form-group">
+                        <label>URGENCY LEVEL *</label>
+                        <div class="urgency-grid">
+                            <div class="urgency-card active critical">
+                                <div class="uc-title">🔴 CRITICAL</div>
+                                <div class="uc-desc">Within 2 hours</div>
+                            </div>
+                            <div class="urgency-card urgent">
+                                <div class="uc-title">🟡 URGENT</div>
+                                <div class="uc-desc">Within 6 hours</div>
+                            </div>
+                            <div class="urgency-card planned">
+                                <div class="uc-title">🟢 PLANNED</div>
+                                <div class="uc-desc">Within 24 hours</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Department -->
+                    <div class="form-group">
+                        <label>DEPARTMENT</label>
+                        <select class="dark-input">
+                            <option>Emergency Surgery</option>
+                            <option>Intensive Care Unit (ICU)</option>
+                            <option>Maternity</option>
+                            <option>Paediatric</option>
+                        </select>
+                    </div>
+
+                    <!-- Contact -->
+                    <div class="form-group">
+                        <label>BLOOD BANK CONTACT</label>
+                        <div class="input-with-icon">
+                            <span class="input-icon">📞</span>
+                            <input type="text" class="dark-input" value="011-2323-2401">
+                        </div>
+                    </div>
+
+                    <!-- AI Action Button -->
+                    <button class="btn-ai-match" onclick="goToScreen(2)">
+                        🤖 Find Donors Now
+                    </button>
+                    <div class="ai-hint">
+                        AI will scan 2 crore registered citizens and shortlist eligible B+ donors in under 10 seconds
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SCREEN 2: AI MATCHING IN PROGRESS          -->
+        <!-- ========================================== -->
+        <div id="screen-2" class="screen ai-matching-screen">
+            <div class="ai-center-content">
+                <div class="ai-icon-pulse">🤖</div>
+                <h2 class="ai-title">AI Matching in Progress</h2>
+                <div class="ai-subtitle">Scanning registered donors...</div>
+
+                <!-- Steps -->
+                <div class="scanning-steps">
+                    <!-- Steps injected via JS -->
+                </div>
+
+                <!-- Counter -->
+                <div class="counter-wrap">
+                    <div class="large-counter" id="scan-counter">2,00,000</div>
+                    <div class="counter-label">donors being scanned</div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-wrap">
+                    <div class="progress-track">
+                        <div class="progress-fill" id="scan-progress"></div>
+                    </div>
+                    <div class="progress-text" id="scan-percent">0% complete</div>
+                </div>
+
+                <div class="privacy-note">
+                    🔒 All donor data is anonymized<br>Privacy protected by UrbanSaarthi
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SCREEN 3: AI MATCHED DONORS LIST           -->
+        <!-- ========================================== -->
+        <div id="screen-3" class="screen">
+            <header class="main-header">
+                <div class="header-left" onclick="goToScreen(1)" style="cursor: pointer;">← AI Matched Donors</div>
+                <div class="header-right"><span class="live-dot"></span> Live</div>
+            </header>
+
+            <div class="content-area">
+                <!-- Summary Card -->
+                <div class="summary-top-card">
+                    <div class="summary-stats">
+                        <div class="stat-col">
+                            <div class="stat-label">DONORS FOUND</div>
+                            <div class="stat-val green-text">847</div>
+                            <div class="stat-desc">Eligible B+ donors</div>
+                        </div>
+                        <div class="stat-col">
+                            <div class="stat-label">NOTIFIED</div>
+                            <div class="stat-val saffron-text">847</div>
+                            <div class="stat-desc">Push notifications sent</div>
+                        </div>
+                    </div>
+                    <div class="summary-footer">
+                        <span>🩸 3 units needed</span>
+                        <span class="divider"></span>
+                        <span>⏱️ CRITICAL — 2hrs</span>
+                        <span class="divider"></span>
+                        <span>📍 Ward 47</span>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="chips-scroll">
+                    <button class="chip active">All (847)</button>
+                    <button class="chip">Confirmed ✅ (3)</button>
+                    <button class="chip">Nearby 📍</button>
+                    <button class="chip">Pending ⏳</button>
+                </div>
+
+                <!-- Donors List -->
+                <div class="donor-list">
+                    <!-- Cards will be populated here -->
+
+                    <div class="donor-card confirmed">
+                        <div class="dc-avatar">RS</div>
+                        <div class="dc-main">
+                            <div class="dc-name">Rahul S.</div>
+                            <div class="dc-meta">B+ · Ward 47</div>
+                            <div class="dc-meta">📍 0.8 km from hospital</div>
+                            <div class="dc-meta green-text">Last donated: 95 days ago ✅</div>
+                        </div>
+                        <div class="dc-right">
+                            <div class="status-pill green">✅ CONFIRMED</div>
+                            <div class="eta">ETA: 12 min</div>
+                        </div>
+                        <div class="dc-actions">
+                            <button class="btn-sm-outline">📞 Call</button>
+                            <button class="btn-sm-outline">📍 Route</button>
+                        </div>
+                    </div>
+
+                    <div class="donor-card confirmed">
+                        <div class="dc-avatar">PM</div>
+                        <div class="dc-main">
+                            <div class="dc-name">Priya M.</div>
+                            <div class="dc-meta">B+ · Ward 46 · 1.4 km</div>
+                            <div class="dc-meta green-text">Last donated: 120 days ago ✅</div>
+                        </div>
+                        <div class="dc-right">
+                            <div class="status-pill green">✅ CONFIRMED</div>
+                            <div class="eta">ETA: 18 min</div>
+                        </div>
+                        <div class="dc-actions">
+                            <button class="btn-sm-outline">📞 Call</button>
+                            <button class="btn-sm-outline">📍 Route</button>
+                        </div>
+                    </div>
+
+                    <div class="donor-card pending">
+                        <div class="dc-avatar" style="background: rgba(255,255,255,0.1); color: var(--text-dim);">AK
+                        </div>
+                        <div class="dc-main">
+                            <div class="dc-name">Amit K.</div>
+                            <div class="dc-meta">B+ · Ward 47 · 0.5 km</div>
+                            <div class="dc-meta green-text">Last donated: 97 days ago ✅</div>
+                        </div>
+                        <div class="dc-right">
+                            <div class="status-pill saffron">⏳ PENDING</div>
+                            <div class="eta" style="color:var(--text-muted)">Notified 2 min ago</div>
+                        </div>
+                        <div class="dc-actions" style="margin-top: 8px;">
+                            <button class="btn-sm-saffron">📞 Call Donor</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sticky Bottom Bar -->
+            <div class="sticky-bottom-bar">
+                <div class="sbb-left">✅ 2 of 3 units confirmed</div>
+                <div class="sbb-right">
+                    <button class="btn-sm-outline" style="border-color: var(--saffron); color: var(--saffron);"
+                        onclick="goToScreen(4)">Send Reminder</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SCREEN 4: DONOR NOTIFICATION               -->
+        <!-- ========================================== -->
+        <div id="screen-4" class="screen">
+            <header class="main-header alert-header">
+                <div class="header-left">🔔 Emergency Alert</div>
+                <div class="header-right">
+                    <div class="critical-pill"><span class="live-dot-red"></span> CRITICAL</div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="emergency-card" id="donor-card-main">
+
+                    <div class="em-top-row">
+                        <div class="em-icon">🩸</div>
+                        <div class="em-title-col">
+                            <div class="em-title">BLOOD NEEDED</div>
+                            <div class="em-subtitle">CRITICAL — LNJP Hospital</div>
+                        </div>
+                        <div class="em-time">2 min ago</div>
+                    </div>
+
+                    <div class="em-blood-display">
+                        <div class="em-huge-blood">B+</div>
+                        <div class="em-huge-sub">Your blood group is needed</div>
+                    </div>
+
+                    <div class="em-details-grid">
+                        <div class="em-grid-item">
+                            <span class="label">Hospital</span>
+                            <span class="val">LNJP Hospital</span>
+                        </div>
+                        <div class="em-grid-item">
+                            <span class="label">Distance</span>
+                            <span class="val">1.2 km from you</span>
+                        </div>
+                        <div class="em-grid-item">
+                            <span class="label">Units Needed</span>
+                            <span class="val">3 units</span>
+                        </div>
+                        <div class="em-grid-item">
+                            <span class="label">Department</span>
+                            <span class="val">Emergency Surgery</span>
+                        </div>
+                    </div>
+
+                    <div class="eligibility-box">
+                        <div class="eb-title">✅ You are eligible to donate</div>
+                        <div class="eb-row">✅ Blood group matches: B+</div>
+                        <div class="eb-row">✅ Last donated: 95 days ago (minimum 90 days ✓)</div>
+                        <div class="eb-row">✅ Donor status: Active</div>
+                    </div>
+
+                    <div class="impact-statement">
+                        <div class="is-main">🫀 Your donation today can directly save 1 life</div>
+                        <div class="is-sub">In Emergency Surgery at LNJP Hospital</div>
+                    </div>
+
+                    <button class="btn-yes" onclick="acceptDonation()">✅ Yes, I'll Donate</button>
+                    <button class="btn-no" onclick="goToScreen(1)">Not available today</button>
+
+                    <div class="privacy-disclaimer">
+                        Tapping YES will share your name and phone with LNJP Blood Bank only
+                    </div>
+                </div>
+
+                <!-- SUCCESS STATE (Hidden Initially) -->
+                <div id="donor-success"
+                    style="display: none; text-align: center; margin-top: 40px; animation: modalScaleIn 0.5s ease;">
+                    <div class="success-check-large">✅</div>
+                    <div style="font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 8px;">Thank You, Rahul!
+                        🙏</div>
+                    <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">LNJP Hospital has been
+                        notified</div>
+
+                    <div class="info-card-success">
+                        <div style="text-align: left; margin-bottom: 16px;">
+                            <strong style="color: #fff;">📍 LNJP Hospital Blood Bank</strong><br>
+                            <span style="color: var(--text-muted); font-size: 13px;">Jawahar Lal Nehru Marg<br>Ground
+                                Floor, Block A</span>
+                        </div>
+                        <div style="text-align: left; font-size: 14px; margin-bottom: 16px; color: #fff;">
+                            ⏱️ Please arrive within 45 minutes
+                        </div>
+                        <div style="text-align: left; font-size: 14px; margin-bottom: 24px; color: #fff;">
+                            📞 Blood Bank: 011-2323-2401
+                        </div>
+
+                        <button class="btn-sm-saffron"
+                            style="width: 100%; padding: 14px; margin-bottom: 10px; font-size: 14px;">📍 Get
+                            Directions</button>
+                        <button class="btn-no" style="width: 100%; font-size: 14px;">📞 Call Blood Bank</button>
+                    </div>
+
+                    <div style="font-size: 11px; color: var(--saffron); margin-top: 24px;">
+                        🏆 +50 Civic Score added to your UrbanSaarthi profile
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Debug Controls -->
+        <div class="debug-controls">
+            <button onclick="prevScreen()">← Prev</button>
+            <span id="screen-ind">1 / 4</span>
+            <button onclick="nextScreen()">Next →</button>
+        </div>
+    </div>
+
+    <script src="blood-script.js"></script>
+</body>
+
+</html>

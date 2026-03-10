@@ -1,0 +1,34 @@
+{
+    "rules": {
+        "trucks": {
+            ".read": true,
+            ".write": true
+        },
+        "drivers": {
+            ".read": true,
+            ".write": true
+        },
+        "complaints": {
+            ".read": true,
+            ".write": true,
+            ".indexOn": [
+                "citizenPhone",
+                "createdAt"
+            ]
+        },
+        "medicalReports": {
+            ".read": true,
+            ".write": true,
+            ".indexOn": [
+                "citizenPhone",
+                "createdAt"
+            ]
+        },
+        "citizens": {
+            ".read": true,
+            ".write": true
+        },
+        ".read": false,
+        ".write": false
+    }
+}

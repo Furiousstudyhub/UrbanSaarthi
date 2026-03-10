@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="UrbanSaarthi Healthcare — Real-time hospital beds, doctors & appointment booking for Delhi Government Hospitals." />
+  <title>Healthcare Services — UrbanSaarthi</title>
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- Location Permission Overlay -->
+  <div id="location-overlay" class="location-overlay active">
+    <div class="location-modal">
+      <div class="location-modal-icon">📍</div>
+      <h2>Enable Location Access</h2>
+      <p>UrbanSaarthi needs your <strong>exact location</strong> to show nearest hospitals with <strong>real driving
+          distances</strong>.</p>
+      <button class="btn-saffron location-allow-btn" id="btn-allow-location">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+          <circle cx="12" cy="10" r="3" />
+        </svg>
+        Allow Location Access
+      </button>
+      <button class="btn-outline location-skip-btn" id="btn-skip-location">Skip for now</button>
+      <p class="location-note">Your location stays on your device and is never shared.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 1 — HEALTHCARE SERVICES HOME    -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="screen-home" class="screen">
+    <header class="top-header">
+      <div class="header-left">
+        <button class="back-btn" aria-label="Go back">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <div class="header-title">
+          <img src="ecg_line_logo.svg" alt="UrbanSaarthi Logo" class="header-logo ecg-logo" />
+          <h1>Healthcare Services</h1>
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="live-indicator"><span class="live-dot"></span> Live Data</span>
+        <div class="brand-logo">
+          <img src="logo_transparent.svg" alt="Logo" class="brand-logo-img" />
+          <span class="brand-text">UrbanSaarthi</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="location-status-bar" id="location-status-bar">
+      <span class="location-status-icon">📍</span>
+      <span id="location-status-text">Detecting your location...</span>
+    </div>
+
+    <div class="search-section">
+      <div class="search-bar">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B7280"
+          stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="search-input" placeholder="Search hospital by name or area..." />
+      </div>
+      <div class="filter-chips">
+        <button class="chip active" data-filter="all">ALL</button>
+        <button class="chip" data-filter="nearest">Nearest</button>
+        <button class="chip" data-filter="emergency">Emergency</button>
+        <button class="chip" data-filter="speciality">Speciality</button>
+        <button class="chip" data-filter="24x7">24×7</button>
+      </div>
+    </div>
+
+    <div class="section-header-home">
+      <h2>Government Hospitals — Delhi NCR</h2>
+      <p><span class="hospital-count" id="hospital-count-label">0</span> hospitals listed · <span
+          class="live-indicator-inline"><span class="live-dot-sm"></span> Updated live</span></p>
+    </div>
+
+    <div class="hospital-list" id="hospital-list"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 2 — HOSPITAL DETAIL PAGE        -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="screen-detail" class="screen">
+    <header class="top-header detail-header">
+      <div class="header-left">
+        <button class="back-btn" id="detail-back-btn" aria-label="Go back">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <div class="header-title">
+          <img src="ecg_line_logo.svg" alt="Logo" class="header-logo ecg-logo" />
+          <h1 id="detail-hospital-name">Hospital Name</h1>
+        </div>
+      </div>
+      <div class="header-right"><span class="live-indicator"><span class="live-dot"></span> Live</span></div>
+    </header>
+
+    <div class="detail-content" id="detail-content">
+      <section class="detail-top-info">
+        <h2 id="detail-full-name">Full Hospital Name</h2>
+        <div class="detail-meta"><span class="gov-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="#3B82F6">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+            </svg> Government of Delhi · Verified</span></div>
+        <p class="detail-address" id="detail-address">📍 Address</p>
+        <p class="detail-phone" id="detail-phone">📞 Phone</p>
+        <p class="detail-distance" id="detail-distance">🚗 Distance: Calculating...</p>
+        <div class="detail-actions">
+          <button class="btn-outline" id="btn-call">📞 Call Hospital</button>
+          <button class="btn-saffron" id="btn-directions">📍 Get Directions</button>
+          <button class="btn-register" id="btn-register">📋 Register</button>
+        </div>
+      </section>
+
+      <section class="detail-section" id="section-beds">
+        <div class="section-title-bar">
+          <h3>🛏️ BED AVAILABILITY</h3>
+          <p>Live count · Last updated 4 minutes ago <span class="live-dot-sm"></span></p>
+        </div>
+        <div class="bed-highlight-card">
+          <span class="bed-label">TOTAL BEDS AVAILABLE</span>
+          <span class="bed-number" id="bed-total-available">35</span>
+          <span class="bed-sub" id="bed-total-capacity">out of 120 total beds</span>
+        </div>
+        <div class="ward-list" id="ward-list"></div>
+        <div class="warning-box"><span class="warning-icon">⚠️</span>
+          <p>ICU and Burns Ward critically low. Consider nearby hospitals for ICU cases.</p>
+        </div>
+      </section>
+
+      <section class="detail-section" id="section-doctors">
+        <div class="section-title-bar">
+          <h3>👨‍⚕️ DOCTORS AVAILABLE TODAY</h3>
+          <p id="doctor-count-text">Doctors currently listed</p>
+        </div>
+        <div class="doctor-filter-chips">
+          <button class="chip active" data-dfilter="all">All</button>
+          <button class="chip" data-dfilter="on-duty">On Duty</button>
+          <button class="chip" data-dfilter="emergency">Emergency</button>
+          <button class="chip" data-dfilter="opd">OPD</button>
+          <button class="chip" data-dfilter="specialist">Specialist</button>
+        </div>
+        <div class="doctor-list" id="doctor-list"></div>
+      </section>
+
+      <section class="detail-section" id="section-facilities">
+        <div class="section-title-bar">
+          <h3>🏨 FACILITIES WE PROVIDE</h3>
+          <p>All services available</p>
+        </div>
+        <div class="facility-grid" id="facility-grid"></div>
+      </section>
+    </div>
+
+    <div class="quick-info-bar" id="quick-info-bar">
+      <button class="qib-btn" id="qib-call"><span>📞</span> Call Now</button>
+      <button class="qib-btn" id="qib-directions"><span>📍</span> Directions</button>
+      <button class="qib-btn qib-beds"><span>🛏️</span> <span id="qib-beds-count">35</span> Beds Free</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- PRE-BOOKING MODAL — STEP 1: SELECT SLOT -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="booking-slot-modal" class="modal-overlay">
+    <div class="modal-container booking-modal">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <button class="modal-back-btn" id="slot-back-btn">←</button>
+          <h2>Select Slot</h2>
+        </div>
+        <button class="modal-close" id="slot-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3 class="booking-title">Book Clinic Visit</h3>
+        <div class="booking-doctor-card" id="booking-doctor-card"></div>
+        <div class="booking-hospital-row" id="booking-hospital-row"></div>
+
+        <div class="booking-section">
+          <div class="booking-section-label">SELECT DATE</div>
+          <div class="date-picker-scroll" id="date-picker-scroll"></div>
+        </div>
+
+        <div class="booking-section">
+          <div class="booking-section-label-row">
+            <span>☀️ <strong>Morning</strong></span>
+            <span class="slot-count" id="morning-slot-count">12 SLOTS</span>
+          </div>
+          <div class="time-slot-grid" id="morning-slots"></div>
+        </div>
+
+        <div class="booking-section">
+          <div class="booking-section-label-row">
+            <span>🌤️ <strong>Afternoon</strong></span>
+            <span class="slot-count" id="afternoon-slot-count">8 SLOTS</span>
+          </div>
+          <div class="time-slot-grid" id="afternoon-slots"></div>
+        </div>
+
+        <button class="btn-saffron booking-continue-btn" id="btn-continue-booking" disabled>Continue Booking</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- PRE-BOOKING MODAL — STEP 2: SUMMARY    -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="booking-summary-modal" class="modal-overlay">
+    <div class="modal-container booking-modal">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <button class="modal-back-btn" id="summary-back-btn">←</button>
+          <h2>Summary</h2>
+        </div>
+        <button class="modal-close" id="summary-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="summary-phone-section">
+          <label>You will receive the call on:</label>
+          <div class="phone-input-row">
+            <span class="phone-prefix">+91</span>
+            <input type="tel" id="summary-phone" placeholder="10-digit mobile" pattern="[0-9]{10}" required />
+          </div>
+          <p class="phone-note">This number can be used for booking during hospital visit</p>
+        </div>
+
+        <div class="form-group"><label for="summary-name">Patient Name *</label><input type="text" id="summary-name"
+            placeholder="Enter patient full name" required /></div>
+        <div class="form-row">
+          <div class="form-group"><label for="summary-age">Age *</label><input type="number" id="summary-age"
+              placeholder="Age" min="0" max="150" required /></div>
+          <div class="form-group"><label for="summary-gender">Gender *</label>
+            <select id="summary-gender" required>
+              <option value="">Select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label for="summary-aadhar">Aadhaar Number (Optional)</label><input type="text"
+            id="summary-aadhar" placeholder="12-digit Aadhaar" pattern="[0-9]{12}" /></div>
+        <div class="form-group"><label for="summary-issue">Health Issue / Symptoms *</label><textarea id="summary-issue"
+            rows="3" placeholder="Describe your symptoms..." required></textarea></div>
+
+        <div class="summary-charges-card">
+          <h4>Total Charges</h4>
+          <div class="charge-row"><span>Consultation Fees (Govt. Subsidized)</span><strong>₹10</strong></div>
+          <div class="charge-row"><span>Registration Fee</span><strong>₹0</strong></div>
+          <div class="charge-row total"><span>Pay at Hospital</span><strong>₹10</strong></div>
+        </div>
+
+        <div class="summary-consult-for" id="summary-consult-for"></div>
+
+        <button class="btn-saffron booking-continue-btn" id="btn-confirm-appointment">Confirm Appointment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- BOOKING CONFIRMED MODAL — STEP 3       -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="booking-confirmed-modal" class="modal-overlay">
+    <div class="modal-container booking-modal">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <h2>Booking Confirmation</h2>
+        </div>
+        <button class="modal-close" id="confirmed-close-btn">&times;</button>
+      </div>
+      <div class="modal-body confirmed-body">
+        <div class="confirmed-hero">
+          <div class="confirmed-checkmark">
+            <svg width="60" height="60" viewBox="0 0 60 60">
+              <circle cx="30" cy="30" r="28" fill="#10b981" opacity="0.15" />
+              <circle cx="30" cy="30" r="22" fill="#10b981" opacity="0.3" />
+              <circle cx="30" cy="30" r="16" fill="#10b981" />
+              <path d="M22 30l5 5 11-11" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </div>
+          <div class="confetti-dots"></div>
+          <h3 class="confirmed-title">Your doctor appointment is confirmed</h3>
+        </div>
+
+        <div class="confirmed-details-card" id="confirmed-details-card"></div>
+
+        <div class="sms-sent-badge" id="sms-sent-badge">
+          <span>📱</span> Appointment details sent to your mobile number
+        </div>
+
+        <div class="confirmed-qr-section" id="confirmed-qr-section"></div>
+
+        <div class="confirmed-actions">
+          <button class="btn-outline" id="btn-fill-medical">📋 Fill Medical Details</button>
+          <button class="btn-saffron" id="btn-download-slip">🖨️ Print Appointment Slip</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- HOSPITAL REGISTRATION MODAL            -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="registration-modal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-header-left"><img src="ecg_line_logo.svg" alt="Logo" class="modal-logo ecg-logo" />
+          <h2>Hospital Registration</h2>
+        </div>
+        <button class="modal-close" id="registration-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="registration-hospital-info"></div>
+        <form id="registration-form" class="appointment-form">
+          <div class="form-group"><label for="reg-name">Full Name *</label><input type="text" id="reg-name"
+              placeholder="Enter your full name" required /></div>
+          <div class="form-row">
+            <div class="form-group"><label for="reg-age">Age *</label><input type="number" id="reg-age"
+                placeholder="Age" min="0" max="150" required /></div>
+            <div class="form-group"><label for="reg-gender">Gender *</label><select id="reg-gender" required>
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select></div>
+          </div>
+          <div class="form-group"><label for="reg-phone">Phone Number *</label><input type="tel" id="reg-phone"
+              placeholder="10-digit mobile" required pattern="[0-9]{10}" /></div>
+          <div class="form-group"><label for="reg-aadhar">Aadhaar Number (Optional)</label><input type="text"
+              id="reg-aadhar" placeholder="12-digit Aadhaar" pattern="[0-9]{12}" /></div>
+          <div class="form-group"><label for="reg-address">Residential Address *</label><textarea id="reg-address"
+              rows="2" placeholder="Your residential address" required></textarea></div>
+          <div class="form-group"><label for="reg-emergency">Emergency Contact *</label><input type="text"
+              id="reg-emergency" placeholder="Name — Phone" required /></div>
+          <div class="form-group"><label for="reg-reason">Reason for Visit *</label><textarea id="reg-reason" rows="3"
+              placeholder="Reason for visiting..." required></textarea></div>
+          <button type="submit" class="btn-saffron submit-appointment-btn">📋 Generate Registration Slip</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- REGISTRATION SLIP MODAL (different)    -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="reg-slip-modal" class="modal-overlay">
+    <div class="modal-container slip-modal-container">
+      <div class="modal-header">
+        <div class="modal-header-left"><img src="ecg_line_logo.svg" alt="Logo" class="modal-logo ecg-logo" />
+          <h2>Registration Slip</h2>
+        </div>
+        <button class="modal-close" id="reg-slip-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="reg-slip-content"></div>
+        <div class="slip-actions">
+          <button class="btn-saffron" onclick="window.print()">🖨️ Print Slip</button>
+          <button class="btn-outline" id="btn-close-reg-slip">✕ Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive QR Overlay -->
+  <div id="qr-detail-overlay" class="qr-detail-overlay">
+    <div class="qr-detail-card" id="qr-detail-card"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- TEST BOOKING MODAL                     -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="test-booking-modal" class="modal-overlay">
+    <div class="modal-container booking-modal">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <button class="modal-back-btn" id="test-booking-back-btn">←</button>
+          <h2>Book Test Appointment</h2>
+        </div>
+        <button class="modal-close" id="test-booking-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="test-info-card" id="test-info-card"></div>
+        <div class="assigned-doctor-card" id="assigned-doctor-card"></div>
+
+        <div class="booking-section">
+          <div class="booking-section-label">SELECT DATE</div>
+          <div class="date-picker-scroll" id="test-date-picker-scroll"></div>
+        </div>
+
+        <div class="booking-section">
+          <div class="booking-section-label-row">
+            <span>☀️ <strong>Morning</strong></span>
+            <span class="slot-count" id="test-morning-slot-count">12 SLOTS</span>
+          </div>
+          <div class="time-slot-grid" id="test-morning-slots"></div>
+        </div>
+
+        <div class="booking-section">
+          <div class="booking-section-label-row">
+            <span>🌤️ <strong>Afternoon</strong></span>
+            <span class="slot-count" id="test-afternoon-slot-count">8 SLOTS</span>
+          </div>
+          <div class="time-slot-grid" id="test-afternoon-slots"></div>
+        </div>
+
+        <div class="summary-phone-section">
+          <label>Mobile Number:</label>
+          <div class="phone-input-row">
+            <span class="phone-prefix">+91</span>
+            <input type="tel" id="test-phone" placeholder="10-digit mobile" pattern="[0-9]{10}" required />
+          </div>
+        </div>
+        <div class="form-group"><label for="test-patient-name">Patient Name *</label><input type="text"
+            id="test-patient-name" placeholder="Enter patient full name" required /></div>
+        <div class="form-row">
+          <div class="form-group"><label for="test-age">Age *</label><input type="number" id="test-age"
+              placeholder="Age" min="0" max="150" required /></div>
+          <div class="form-group"><label for="test-gender">Gender *</label>
+            <select id="test-gender" required>
+              <option value="">Select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-saffron booking-continue-btn" id="btn-confirm-test-booking" disabled>Confirm Test
+          Booking</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- REPORT REGISTRATION MODAL              -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="report-registration-modal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <img src="ecg_line_logo.svg" alt="Logo" class="modal-logo ecg-logo" />
+          <h2>Report Registration</h2>
+        </div>
+        <button class="modal-close" id="report-reg-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="report-registration-form" class="appointment-form">
+          <div class="form-group"><label for="rr-name">Full Name *</label><input type="text" id="rr-name"
+              placeholder="Enter your full name" required /></div>
+          <div class="form-row">
+            <div class="form-group"><label for="rr-age">Age *</label><input type="number" id="rr-age" placeholder="Age"
+                min="0" max="150" required /></div>
+            <div class="form-group"><label for="rr-gender">Gender *</label><select id="rr-gender" required>
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select></div>
+          </div>
+          <div class="form-group"><label for="rr-phone">Phone Number *</label><input type="tel" id="rr-phone"
+              placeholder="10-digit mobile" required pattern="[0-9]{10}" /></div>
+          <div class="form-group"><label for="rr-test">Test Required *</label>
+            <select id="rr-test" required>
+              <option value="">Select Test</option>
+              <option value="CBC">Complete Blood Count (CBC)</option>
+              <option value="TFT">Thyroid Function Test (TFT)</option>
+              <option value="LFT">Liver Function Test (LFT)</option>
+              <option value="Lipid">Lipid Profile</option>
+              <option value="HbA1c">HbA1c (Glycated Hemoglobin)</option>
+              <option value="Urinalysis">Urinalysis (Routine)</option>
+              <option value="X-Ray">Chest X-Ray</option>
+              <option value="RT-PCR">COVID-19 RT-PCR</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label for="rr-reason">Reason / Symptoms *</label><textarea id="rr-reason" rows="3"
+              placeholder="Briefly describe the reason for the test..." required></textarea></div>
+          <button type="submit" class="btn-saffron submit-appointment-btn">📋 Register for Report</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 3 — REPORT STATUS TRACKER       -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="screen-reports" class="screen">
+    <header class="top-header">
+      <div class="header-left">
+        <button class="back-btn" id="reports-back-btn" aria-label="Go back">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <div class="header-title">
+          <span class="header-icon">🧪</span>
+          <h1>Report Status</h1>
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="live-indicator"><span class="live-dot"></span> Live</span>
+      </div>
+    </header>
+
+    <!-- Search by Report ID -->
+    <div class="search-section">
+      <div class="search-bar">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B7280"
+          stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="report-search-input" placeholder="Search by Report ID or Patient Name..." />
+      </div>
+      <div class="filter-chips" id="report-filter-chips">
+        <button class="chip active" data-rfilter="all">All</button>
+        <button class="chip" data-rfilter="in-progress">In Progress</button>
+        <button class="chip" data-rfilter="completed">Completed</button>
+        <button class="chip" data-rfilter="pending">Pending</button>
+      </div>
+    </div>
+
+    <div class="section-header-home">
+      <h2>Your Lab Reports</h2>
+      <p><span class="hospital-count" id="report-count-label">0</span> reports found · <span
+          class="live-indicator-inline"><span class="live-dot-sm"></span> Real-time tracking</span></p>
+    </div>
+
+    <div class="report-list" id="report-list"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 4 — REPORT DETAIL               -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="screen-report-detail" class="screen">
+    <header class="top-header">
+      <div class="header-left">
+        <button class="back-btn" id="report-detail-back-btn" aria-label="Go back">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <div class="header-title">
+          <span class="header-icon">📋</span>
+          <h1 id="report-detail-title">Report Details</h1>
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="live-indicator"><span class="live-dot"></span> Live</span>
+      </div>
+    </header>
+
+    <div class="detail-content" id="report-detail-content"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 5 — CITY HELPDESK               -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="screen-helpline" class="screen">
+    <header class="top-header">
+      <div class="header-left">
+        <div class="header-title">
+          <img src="headset_logo.png" alt="Helpdesk Logo" class="header-icon"
+            style="width: 28px; height: 28px; object-fit: contain; margin-right: 8px;" />
+          <h1>City Helpdesk</h1>
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="live-indicator"><span class="live-dot"></span> Online</span>
+        <div class="brand-logo" style="margin-left: 12px;">
+          <img src="logo_transparent.svg" alt="Logo" class="brand-logo-img" />
+          <span class="brand-text">UrbanSaarthi</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="helpline-tabs">
+      <button class="helpline-tab active" id="tab-file-complaint">File a Complaint</button>
+      <button class="helpline-tab" id="tab-check-status">Check Status</button>
+    </div>
+
+    <!-- File Complaint View -->
+    <div id="view-file-complaint" class="helpline-view active">
+      <div class="section-header-home" style="padding-top: 20px;">
+        <h2>Register New Complaint</h2>
+        <p>Your issue will be routed to the respective civic department.</p>
+      </div>
+      <div class="detail-content">
+        <form id="complaint-form" class="appointment-form">
+          <div class="form-group">
+            <label for="complaint-dept">Select Department *</label>
+            <select id="complaint-dept" required>
+              <option value="">Select Department</option>
+              <option value="Municipal Corporation">Municipal Corporation</option>
+              <option value="Delhi Jal Board">Delhi Jal Board</option>
+              <option value="Healthcare Department">Healthcare Department</option>
+              <option value="Public Works Department (PWD)">Public Works Department (PWD)</option>
+              <option value="Electricity Department">Electricity Department</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="complaint-issue">Select Issue *</label>
+            <select id="complaint-issue" required disabled>
+              <option value="">Select Department First</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="complaint-desc">Description *</label>
+            <textarea id="complaint-desc" rows="3" placeholder="Briefly describe the issue..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="complaint-location">Location/Address *</label>
+            <input type="text" id="complaint-location" placeholder="Exact location of the issue" required />
+          </div>
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label"
+              style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 10px; background: rgba(30,41,59,0.5); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+              <input type="checkbox" id="complaint-send-mail"
+                style="width: 18px; height: 18px; accent-color: var(--saffron);" />
+              <span>Generate Automatically Drafted Mail to Department</span>
+            </label>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 6px; margin-left: 4px;">An official
+              complaint email will be automatically generated and mapped to the respective department's official email.
+            </p>
+          </div>
+          <button type="submit" class="btn-saffron submit-appointment-btn">🚀 Submit Complaint</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Check Status View -->
+    <div id="view-check-status" class="helpline-view">
+      <div class="search-section" style="padding-top: 20px;">
+        <div class="search-bar">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B7280"
+            stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="complaint-search-input" placeholder="Search by Complaint ID..." />
+        </div>
+      </div>
+      <div class="section-header-home">
+        <h2>Your Complaints</h2>
+        <p><span class="hospital-count" id="complaint-count-label">0</span> complaints found</p>
+      </div>
+      <div class="complaint-list" id="complaint-list">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 6 — BROADCAST DASHBOARD          -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="screen-broadcast" class="screen">
+    <header class="top-header">
+      <div class="header-left">
+        <div class="header-title">
+          <span class="header-icon">📢</span>
+          <h1>Broadcasts</h1>
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="live-indicator"><span class="live-dot"></span> Live</span>
+        <div class="brand-logo" style="margin-left: 12px;">
+          <img src="logo_transparent.svg" alt="Logo" class="brand-logo-img" />
+          <span class="brand-text">UrbanSaarthi</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="section-header-home" style="padding-top: 16px;">
+      <h2>Official Announcements</h2>
+      <p>Notices from DM, SDM, MCD & Civic Authorities.</p>
+    </div>
+
+    <div class="broadcast-list" id="broadcast-list">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- AI MAIL SLIP MODAL (PDF Downloadable)    -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="mail-slip-modal" class="modal-overlay">
+    <div class="modal-container slip-modal-container" style="max-width: 600px;">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <img src="ecg_line_logo.svg" alt="Logo" class="modal-logo ecg-logo" />
+          <h2>Generated Complaint Mail</h2>
+        </div>
+        <button class="modal-close" id="mail-slip-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="mail-slip-content"></div>
+        <div class="slip-actions">
+          <button class="btn-saffron" id="btn-download-mail-pdf">🖨️ Download PDF</button>
+          <button class="btn-outline" id="btn-close-mail-slip">✕ Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- BROADCAST LETTER MODAL (PDF)             -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="broadcast-letter-modal" class="modal-overlay">
+    <div class="modal-container slip-modal-container" style="max-width: 600px;">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <img src="ecg_line_logo.svg" alt="Logo" class="modal-logo ecg-logo" />
+          <h2>Official Notification</h2>
+        </div>
+        <button class="modal-close" id="broadcast-letter-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="broadcast-letter-content"></div>
+        <div class="slip-actions">
+          <button class="btn-saffron" id="btn-download-broadcast-pdf">🖨️ Download Notice PDF</button>
+          <button class="btn-outline" id="btn-close-broadcast-slip">✕ Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 7 — LOGIN & OTP                 -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="screen-login" class="screen active">
+    <div class="auth-container">
+      <img src="logo_transparent.svg" alt="UrbanSaarthi" class="auth-logo" />
+      <h1 class="auth-title">Welcome to UrbanSaarthi</h1>
+      <p class="auth-subtitle">Verify your identity to access Delhi Govt. services</p>
+
+      <!-- Phone Form -->
+      <div class="auth-form" id="login-phone-form">
+        <div class="auth-input-group">
+          <label>Mobile Number</label>
+          <div class="phone-input-row"
+            style="background:var(--bg-card-2); border-radius:12px; border:1px solid var(--border); padding-left:16px;">
+            <span class="phone-prefix" style="color:var(--text-muted); font-weight:700;">+91</span>
+            <input type="tel" id="login-phone" class="auth-input" placeholder="Enter 10-digit number"
+              pattern="[0-9]{10}" style="border:none; background:transparent;" required />
+          </div>
+        </div>
+        <button class="btn-saffron btn-auth" id="btn-send-otp">Get OTP via SMS</button>
+      </div>
+
+      <!-- OTP Form (Hidden initially) -->
+      <div class="auth-form" id="login-otp-form" style="display: none;">
+        <div class="auth-input-group" style="text-align: center;">
+          <label>Enter the 4-digit OTP sent to your number</label>
+        </div>
+        <div class="otp-container" id="otp-inputs">
+          <input type="text" class="otp-box" maxlength="1" id="otp-1" />
+          <input type="text" class="otp-box" maxlength="1" id="otp-2" />
+          <input type="text" class="otp-box" maxlength="1" id="otp-3" />
+          <input type="text" class="otp-box" maxlength="1" id="otp-4" />
+        </div>
+        <button class="btn-saffron btn-auth" id="btn-verify-otp">Verify & Secure Login</button>
+        <p style="margin-top:16px; font-size:13px; color:var(--text-muted); cursor:pointer;" id="btn-resend-otp">Resend
+          OTP</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 8 — PROFILE SETUP               -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="screen-profile-setup" class="screen">
+    <header class="top-header">
+      <div class="header-left">
+        <div class="header-title">
+          <img src="logo_transparent.svg" alt="Logo" class="header-icon"
+            style="width:24px;height:24px;border-radius:4px;" />
+          <h1 style="font-size:18px;">Complete Profile</h1>
+        </div>
+      </div>
+    </header>
+    <div class="detail-content" style="padding-top:20px;">
+      <p style="margin-bottom:20px; color:var(--text-muted); font-size:14px;">Please provide your basic details for
+        hassle-free hospital appointments and report tracking.</p>
+      <form id="profile-setup-form" class="appointment-form">
+        <div class="form-group"><label>Full Name *</label><input type="text" id="setup-name" class="auth-input"
+            placeholder="e.g. Rahul Sharma" required /></div>
+        <div class="form-row">
+          <div class="form-group"><label>Date of Birth *</label><input type="date" id="setup-dob" class="auth-input"
+              required /></div>
+          <div class="form-group"><label>Blood Group *</label>
+            <select id="setup-blood" class="auth-input" required>
+              <option value="">Select</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>Gender *</label>
+          <select id="setup-gender" class="auth-input" required>
+            <option value="">Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Residential Address *</label><textarea id="setup-address" class="auth-input"
+            rows="2" placeholder="House no, Area, City" required></textarea></div>
+        <div class="form-group"><label>ABHA ID / Aadhaar (Optional)</label><input type="text" id="setup-abha"
+            class="auth-input" placeholder="14-digit ABHA or 12-digit Aadhaar" /></div>
+
+        <button type="submit" class="btn-saffron btn-auth" style="margin-top:10px;">Save Profile & Continue</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 9 — PROFILE DASHBOARD           -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="screen-profile" class="screen">
+    <header class="top-header">
+      <div class="header-left">
+        <div class="header-title">
+          <span class="header-icon">👤</span>
+          <h1>My Profile</h1>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="brand-logo">
+          <img src="logo_transparent.svg" alt="Logo" class="brand-logo-img" />
+          <span class="brand-text">UrbanSaarthi</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="profile-header-card">
+      <div class="profile-avatar-wrapper" style="position: relative; display: inline-block; cursor: pointer;">
+        <div class="profile-avatar-lg" id="profile-initial">R</div>
+        <img id="profile-image-preview" src="" alt="Profile"
+          style="display: none; width: 80px; height: 80px; border-radius: 50%; object-fit: cover; position: absolute; top:0; left:0; z-index: 2;" />
+        <div class="profile-edit-overlay"
+          style="position: absolute; bottom: 0; right: -5px; background: var(--saffron); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 3;">
+          ✏️
+        </div>
+        <input type="file" id="profile-image-input" accept="image/*" style="display: none;" />
+      </div>
+      <div class="profile-info">
+        <h2 id="prof-name">Rahul Sharma</h2>
+        <p><span style="color:var(--saffron);">✓ Verified</span> • +91-<span id="prof-phone">9999999999</span></p>
+      </div>
+    </div>
+
+    <div class="section-header-home" style="padding-top:0;">
+      <h2>Personal Information</h2>
+    </div>
+    <div class="profile-details-grid">
+      <div class="profile-detail-item"><span class="pdi-label">Date of Birth</span><span class="pdi-value"
+          id="prof-dob">01 Jan 1990</span></div>
+      <div class="profile-detail-item"><span class="pdi-label">Gender</span><span class="pdi-value"
+          id="prof-gender">Male</span></div>
+      <div class="profile-detail-item"><span class="pdi-label">Blood Group</span><span class="pdi-value"
+          style="color:var(--red);" id="prof-blood">O+</span></div>
+      <div class="profile-detail-item"><span class="pdi-label">ABHA ID</span><span class="pdi-value" id="prof-abha">Not
+          linked</span></div>
+    </div>
+
+    <div class="section-header-home" style="padding-top:0;">
+      <h2>Address Details</h2>
+    </div>
+    <div class="profile-details-grid" style="grid-template-columns: 1fr;">
+      <div class="profile-detail-item"><span class="pdi-label">Residential Address</span><span class="pdi-value"
+          id="prof-address">New Delhi, India</span></div>
+    </div>
+
+    <div class="logout-btn-wrap">
+      <button class="btn-outline btn-auth" id="btn-logout"
+        style="color:var(--red); border-color:var(--red-bg); background:var(--red-bg);">Log Out</button>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-item" id="nav-home"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></button>
+    <button class="nav-item active" id="nav-healthcare"><span class="nav-icon">🏥</span><span
+        class="nav-label">Healthcare</span></button>
+    <button class="nav-item" id="nav-helpline">
+      <img src="headset_logo.png" style="width: 20px; height: 20px; object-fit: contain; margin-bottom: 4px;"
+        alt="Helpline" />
+      <span class="nav-label">Helpline</span>
+    </button>
+    <button class="nav-item" id="nav-broadcast">
+      <div style="position: relative;">
+        <span class="nav-icon">📢</span>
+        <span class="nav-badge" id="nav-broadcast-badge" style="display: none;">0</span>
+      </div>
+      <span class="nav-label">Broadcast</span>
+    </button>
+    <button class="nav-item" id="nav-profile"><span class="nav-icon">👤</span><span
+        class="nav-label">Profile</span></button>
+  </nav>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
